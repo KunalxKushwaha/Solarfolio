@@ -1,0 +1,19 @@
+'use client';
+import { useEffect } from 'react';
+import Lenis from '@studio-freight/lenis';
+
+export default function useLenis(enabled: boolean) {
+  useEffect(() => {
+    if (!enabled) return;
+    const lenis = new Lenis({
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.2
+    });
+    let raf = 0;
+    const loop = (time: number) => { lenis.raf(time); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); lenis.destroy(); };
+  }, [enabled]);
+}
